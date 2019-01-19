@@ -1,4 +1,5 @@
-from flask_restplus import Namespace, Resource, fields, reqparse
+from flask import request
+from flask_restplus import Namespace, Resource, fields, reqparse, marshal
 from pymysql.cursors import DictCursor
 
 from db_rest_service import app
@@ -14,6 +15,13 @@ NagiosAlertModel = api.model('NagiosAlertModel',
 NagiosAlertListModel = api.model('NagiosAlertListModel', {
     'alerts': fields.List(fields.Nested(NagiosAlertModel))
 })
+
+NagiosInsertAlertModel = api.model('NagiosInsertAlertModel',
+                                   {'hostname': fields.String(),
+                                    'service_name': fields.String(),
+                                    'notification_type': fields.String(),
+                                    'message_text': fields.String()
+                                   })
 
 parser = reqparse.RequestParser()
 parser.add_argument('type', type=str, choices=['UNSENT', 'ALL'], default='UNSENT', help='types of alerts to return')
@@ -37,7 +45,24 @@ class NagiosAlerts(Resource):
                                                                                               limit_filter)
         app.logger.info("Query to execute is {}".format(query))
 
-        conn = mysql_nagios.connect()
+        conn = mysql_nagios.get_db()
         cursor = conn.cursor(cursor=DictCursor)
         cursor.execute(query)
         return {'alerts': list(cursor)}
+
+    @api.expect(NagiosInsertAlertModel, validate=True)
+    def post(self):
+        """
+        Allows the addition of new alerts
+        :return:
+        """
+        alert_data = request.json
+
+        conn = mysql_nagios.get_db()
+        cursor = conn.cursor()
+        query = "INSERT INTO `nagios_alerts`(`message_text`, `hostname`, `service_name`, `notification_type`) VALUES (%s, %s, %s, %s)"
+        cursor.execute(query, (alert_data['message_text'], alert_data['hostname'], alert_data['service_name'], alert_data['notification_type']))
+        conn.commit()
+        app.logger.info("Inserted alert successfully")
+
+
