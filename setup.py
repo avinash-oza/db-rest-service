@@ -1,9 +1,9 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
         name='db-rest-service',
-        version='0.1b2',
-        packages=['db_rest_service',],
+        version='0.1b3',
+        packages=find_packages(),
         license='TBD',
         long_description='TBD'
         )
