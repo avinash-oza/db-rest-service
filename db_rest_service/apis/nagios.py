@@ -9,7 +9,8 @@ api = Namespace('nagios', description='Nagios alerts related operations')
 NagiosAlertModel = api.model('NagiosAlertModel',
                              {'date_inserted': fields.DateTime(),
                               'message_text': fields.String(),
-                              'hostname': fields.String()})
+                              'hostname': fields.String(),
+                              'id': fields.Integer()})
 NagiosAlertListModel = api.model('NagiosAlertListModel', {
     'alerts': fields.List(fields.Nested(NagiosAlertModel))
 })
