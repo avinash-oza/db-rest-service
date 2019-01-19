@@ -1,5 +1,5 @@
 from flask import request
-from flask_restplus import Namespace, Resource, fields, reqparse, marshal
+from flask_restplus import Namespace, Resource, fields, reqparse
 from pymysql.cursors import DictCursor
 
 from db_rest_service import app
@@ -65,4 +65,18 @@ class NagiosAlerts(Resource):
         conn.commit()
         app.logger.info("Inserted alert successfully")
 
+    @api.doc(params={'id': 'The ID to update', 'status': 'The new status of the alert'})
+    def put(self):
+        """
+        Handles updating an alerts status
+        :return: 200 if successful
+        """
+        new_status = request.args['status'].upper()
+        alert_id = int(request.args['id'])
 
+        query = "UPDATE nagios_alerts SET status=%s, date_sent=NOW() where id=%s"
+
+        conn = mysql_nagios.get_db()
+        cursor = conn.cursor()
+        cursor.execute(query, (new_status, alert_id))
+        conn.commit()
