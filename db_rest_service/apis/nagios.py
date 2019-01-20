@@ -89,14 +89,16 @@ class NagiosAlerts(Resource):
         conn.commit()
         app.logger.info("Inserted alert successfully")
 
-    @api.doc(params={'id': 'The ID to update', 'status': 'The new status of the alert'})
-    def put(self):
+@api.route('/<int:alert_id>')
+class NagiosUpdate(Resource):
+    @api.doc(params={'status': 'The new status of the alert'})
+    def post(self, alert_id):
         """
         Handles updating an alerts status
         :return: 200 if successful
         """
         new_status = request.args['status'].upper()
-        alert_id = int(request.args['id'])
+        # alert_id = int(request.args['id'])
 
         query = "UPDATE nagios_alerts SET status=%s, date_sent=NOW() where id=%s"
 
