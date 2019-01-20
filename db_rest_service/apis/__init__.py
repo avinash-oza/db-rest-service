@@ -1,6 +1,7 @@
 from flask_restplus import Api
 
 from .nagios import api as ns1
+from .status import api as ns2
 
 api = Api(
     title='DB rest service',
@@ -10,3 +11,4 @@ api = Api(
 )
 
 api.add_namespace(ns1)
+api.add_namespace(ns2)
