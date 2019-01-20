@@ -13,7 +13,8 @@ NagiosAlertModel = api.model('NagiosAlertModel',
                              {'date_inserted': fields.DateTime(),
                               'message_text': fields.String(),
                               'hostname': fields.String(),
-                              'id': fields.Integer()})
+                              'id': fields.Integer(),
+                              'notification_type': fields.String()})
 NagiosAlertListModel = api.model('NagiosAlertListModel', {
     'alerts': fields.List(fields.Nested(NagiosAlertModel))
 })
