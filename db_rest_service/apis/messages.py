@@ -7,10 +7,16 @@ from db_rest_service.db_config import mysql_nagios
 
 api = Namespace('messages', description='Message related operations')
 
+
+class AcknowledgeableMessage(fields.Raw):
+    def format(self, value):
+        print("XXXX", value)
+        return True if value is not None else False
+
 MessageModel = api.model('MessageModel',
                          {'date_inserted': fields.DateTime(),
                           'message_text': fields.String(),
-                          # 'acknowledge_command': fields.String(),
+                          'can_acknowledge': AcknowledgeableMessage(default=False),
                           'id': fields.Integer()})
 MessageListModel = api.model('MessageListModel ', {
     'alerts': fields.List(fields.Nested(MessageModel))
