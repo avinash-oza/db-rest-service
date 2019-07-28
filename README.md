@@ -1,2 +1,2 @@
 # db-rest-service
-REST access to mysql db
+DEPRECATED - REST access to mysql db
